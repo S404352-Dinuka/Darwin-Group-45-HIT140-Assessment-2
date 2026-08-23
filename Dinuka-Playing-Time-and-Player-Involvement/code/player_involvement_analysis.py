@@ -145,3 +145,27 @@ print(
     f"Mixed-position and other-position records removed: "
     f"{before - len(df)}"
 )
+
+# Check the cleaned dataset
+print(
+    f"\nCleaned dataset size: "
+    f"{df.shape[0]} rows"
+)
+print("\nEligible players by position:")
+print(
+    df["Pos"].value_counts()
+)
+print("\nMn/MP summary:")
+print(
+    df["Mn/MP"].describe()
+)
+
+# Save cleaned dataset
+df.to_csv(
+    "../data/processed/world_cup_2026_playing_time_clean.csv",
+    index=False
+)
+print(
+    "\nCleaned dataset saved as: "
+    "../data/processed/world_cup_2026_playing_time_clean.csv"
+)
