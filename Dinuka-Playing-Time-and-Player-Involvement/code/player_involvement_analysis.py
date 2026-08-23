@@ -117,3 +117,17 @@ print(
     f"\nPlayers with zero appearances removed: "
     f"{before - len(df)}"
 )
+
+
+# Removing missing or invalid Mn/MP values
+before = len(df)
+df = df.dropna(
+    subset=["Mn/MP", "Pos"]
+).copy()
+df = df[
+    df["Mn/MP"] > 0
+].copy()
+print(
+    f"Records with missing or invalid Mn/MP removed: "
+    f"{before - len(df)}"
+)
