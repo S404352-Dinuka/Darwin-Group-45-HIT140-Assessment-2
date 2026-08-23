@@ -131,3 +131,17 @@ print(
     f"Records with missing or invalid Mn/MP removed: "
     f"{before - len(df)}"
 )
+
+
+# Keep Defenders and Midfielders only - Only players classified exactly as DF or MF are included.
+#
+# Mixed-position players such as DFMF and MFDF are excluded because
+# they cannot be clearly assigned to one comparison group.
+before = len(df)
+df = df[
+    df["Pos"].isin(["DF", "MF"])
+].copy()
+print(
+    f"Mixed-position and other-position records removed: "
+    f"{before - len(df)}"
+)
