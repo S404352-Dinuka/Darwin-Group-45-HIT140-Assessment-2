@@ -106,3 +106,14 @@ print(
 # Missing value check before filtering
 print("\nMissing values before filtering:")
 print(df.isnull().sum())
+
+
+# Removing players who did not appear in a match
+before = len(df)
+df = df[
+    df["MP"] > 0
+].copy()
+print(
+    f"\nPlayers with zero appearances removed: "
+    f"{before - len(df)}"
+)
