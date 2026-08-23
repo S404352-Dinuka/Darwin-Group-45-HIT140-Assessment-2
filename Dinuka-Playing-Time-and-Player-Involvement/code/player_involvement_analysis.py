@@ -86,3 +86,24 @@ print(
 
 # Remove exact duplicate rows if any exist
 df = df.drop_duplicates().copy()
+
+
+# Check Player_ID values
+missing_player_ids = df["Player_ID"].isnull().sum()
+
+duplicate_player_ids = (
+    df["Player_ID"]
+    .dropna()
+    .duplicated()
+    .sum()
+)
+
+print(
+    f"Missing Player_ID values: "
+    f"{missing_player_ids}"
+)
+
+print(
+    f"Duplicate Player_ID values: "
+    f"{duplicate_player_ids}"
+)
