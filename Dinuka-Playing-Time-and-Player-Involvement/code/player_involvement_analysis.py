@@ -64,7 +64,6 @@ columns_needed = [
     "Mn/MP",
     "Player_ID"
 ]
-
 df = raw[columns_needed].copy()
 
 # Clean position values
@@ -78,7 +77,6 @@ df["Pos"] = (
 
 # Check duplicate rows
 duplicate_rows = df.duplicated().sum()
-
 print(
     f"\nExact duplicate rows found: "
     f"{duplicate_rows}"
@@ -90,20 +88,21 @@ df = df.drop_duplicates().copy()
 
 # Check Player_ID values
 missing_player_ids = df["Player_ID"].isnull().sum()
-
 duplicate_player_ids = (
     df["Player_ID"]
     .dropna()
     .duplicated()
     .sum()
 )
-
 print(
     f"Missing Player_ID values: "
     f"{missing_player_ids}"
 )
-
 print(
     f"Duplicate Player_ID values: "
     f"{duplicate_player_ids}"
 )
+
+# Missing value check before filtering
+print("\nMissing values before filtering:")
+print(df.isnull().sum())
