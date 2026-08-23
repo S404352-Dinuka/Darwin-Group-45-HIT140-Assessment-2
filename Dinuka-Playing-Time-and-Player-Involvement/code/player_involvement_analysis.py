@@ -74,3 +74,15 @@ df["Pos"] = (
     .str.strip()
     .str.upper()
 )
+
+
+# Check duplicate rows
+duplicate_rows = df.duplicated().sum()
+
+print(
+    f"\nExact duplicate rows found: "
+    f"{duplicate_rows}"
+)
+
+# Remove exact duplicate rows if any exist
+df = df.drop_duplicates().copy()
