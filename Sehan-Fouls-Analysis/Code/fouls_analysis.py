@@ -8,6 +8,13 @@ print(data.info())
 print(data.head())
 print("Rows and Columns:", data.shape)
 
+#Removed repeated Headers
+data = data[data["Rk"] != "Rk"]
+
+#created a temp and re read it again without the repeated headers
+data.to_csv("../data/processed/temp.csv", index=False)
+data = pd.read_csv("../data/processed/temp.csv")
+
 #Get the required variables from the dataset
 player_data = data[["Player", "Pos", "Squad", "90s", "Fls"]]
 
@@ -39,3 +46,9 @@ print(midf["Fouls_90"].describe())
 
 print("Forwards Fouls per 90 Mins:")
 print(fwd["Fouls_90"].describe())
+
+#Combine both groups into one dataset
+final_data = pd.concat([midf, fwd])
+
+#Save the final data as csv
+final_data.to_csv("../data/processed/misc_stats_cleaned.csv", index=False)
