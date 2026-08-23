@@ -1,22 +1,50 @@
+"""
+FIFA World Cup 2026 - Analytic Task: Playing Time & Player Involvement
+Author: Dinuka
+
+Analytic question:
+    Is there a significant difference in the average minutes played per
+    appearance (Mn/MP) between Defenders (DF) and Midfielders (MF)
+    during the FIFA World Cup 2026?
+
+Data source:
+    FBref World Cup 2026 Playing Time table
+"""
+
+# Import required libraries
 import pandas as pd
 
-file_path = "../data/raw/world_cup_2026_player_involvement_raw.csv"
+# DATA LOADING
 
-# Load the raw dataset
-df = pd.read_csv(file_path)
+# Reproducibility and statistical settings
+RANDOM_SEED = 42
+SAMPLE_SIZE_PER_GROUP = 150
+ALPHA = 0.05
 
-print("Dataset loaded successfully.")
-print("Number of rows:", df.shape[0])
-print("Number of columns:", df.shape[1])
+# 95% confidence level when alpha = 0.05
+CONFIDENCE_LEVEL = 1 - ALPHA
+
+# Raw dataset path
+RAW_PATH = "world_cup_2026_player_involvement_raw.csv"
+
+# Load dataset
+raw = pd.read_csv(RAW_PATH)
+
+print("=" * 70)
+print("SECTION 1: RAW DATA LOADED")
+print("=" * 70)
+
+print(f"Number of rows: {raw.shape[0]}")
+print(f"Number of columns: {raw.shape[1]}")
 
 print("\nFirst 5 rows:")
-print(df.head())
+print(raw.head())
 
 print("\nColumn names:")
-print(df.columns.tolist())
+print(raw.columns.tolist())
 
 print("\nDataset information:")
-print(df.info())
+raw.info()
 
-print("\nMissing values:")
-print(df.isnull().sum())
+print("\nMissing values in raw dataset:")
+print(raw.isnull().sum())
