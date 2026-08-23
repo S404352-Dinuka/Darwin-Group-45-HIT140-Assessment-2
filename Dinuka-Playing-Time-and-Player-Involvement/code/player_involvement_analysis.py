@@ -14,7 +14,7 @@ Data source:
 # Import required libraries
 import pandas as pd
 
-# DATA LOADING
+##### DATA LOADING #####
 
 # Reproducibility and statistical settings
 RANDOM_SEED = 42
@@ -25,13 +25,13 @@ ALPHA = 0.05
 CONFIDENCE_LEVEL = 1 - ALPHA
 
 # Raw dataset path
-RAW_PATH = "world_cup_2026_player_involvement_raw.csv"
+RAW_PATH = "../data/raw/world_cup_2026_player_involvement_raw.csv"
 
 # Load dataset
 raw = pd.read_csv(RAW_PATH)
 
 print("=" * 70)
-print("SECTION 1: RAW DATA LOADED")
+print("RAW DATA LOADED")
 print("=" * 70)
 
 print(f"Number of rows: {raw.shape[0]}")
@@ -48,3 +48,29 @@ raw.info()
 
 print("\nMissing values in raw dataset:")
 print(raw.isnull().sum())
+
+##### DATA WRANGLING AND CLEANING #####
+
+print("\n" + "=" * 70)
+print("DATA WRANGLING AND CLEANING")
+print("=" * 70)
+
+
+# Select variables related to the analytical question
+columns_needed = [
+    "Player",
+    "Pos",
+    "MP",
+    "Mn/MP",
+    "Player_ID"
+]
+
+df = raw[columns_needed].copy()
+
+# Clean position values
+df["Pos"] = (
+    df["Pos"]
+    .astype("string")
+    .str.strip()
+    .str.upper()
+)
