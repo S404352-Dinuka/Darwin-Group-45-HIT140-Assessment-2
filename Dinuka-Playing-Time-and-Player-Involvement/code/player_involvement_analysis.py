@@ -248,7 +248,7 @@ sampling_check = pd.DataFrame(
 )
 print("\nPopulation vs sample means:")
 print(sampling_check.round(2))
-sample.to_csv("world_cup_2026_playing_time_sample.csv", index=False)
+sample.to_csv("../data/processed/world_cup_2026_playing_time_sample.csv", index=False)
 print("\nSample saved as: world_cup_2026_playing_time_sample.csv")
 
 ##### DESCRIPTIVE STATISTICS #####
@@ -329,7 +329,7 @@ print("\nDescriptive statistics:")
 print(descriptive_table.round(2))
 
 # Save descriptive statistics
-descriptive_table.round(3).to_csv("descriptive_statistics.csv")
+descriptive_table.round(3).to_csv("../outputs/descriptive_statistics.csv", index=False)
 
 # using the 1.5 x IQR rule to identify possible outliers
 print("\nPossible outliers using the 1.5 x IQR rule:")
@@ -366,7 +366,7 @@ plt.ylabel("Number of players")
 plt.legend()
 plt.grid(axis="y",alpha=0.3)
 plt.tight_layout()
-plt.savefig("playing_time_histogram.png", dpi=300)
+plt.savefig("../outputs/playing_time_histogram.png", dpi=300)
 plt.close()
 
 print("Histogram saved as: " + "playing_time_histogram.png")
@@ -447,7 +447,7 @@ confidence_table = pd.DataFrame(
 )
 
 # Save confidence interval results
-confidence_table.round(3).to_csv("confidence_intervals.csv", index=False)
+confidence_table.round(3).to_csv("../outputs/confidence_intervals.csv", index=False)
 
 ##### INDEPENDENT TWO-SAMPLE t-TEST #####
 
