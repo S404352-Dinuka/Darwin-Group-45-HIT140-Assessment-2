@@ -15,6 +15,7 @@ Data source:
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import stats
 
 ##### DATA LOADING #####
 
@@ -370,3 +371,80 @@ plt.close()
 
 print("Histogram saved as: " + "playing_time_histogram.png")
 
+##### 95% CONFIDENCE INTERVALS #####
+
+print("\n" + "=" * 70)
+print("SECTION 6: 95% CONFIDENCE INTERVALS")
+print("=" * 70)
+
+def mean_confidence_interval(values, confidence=0.95):
+    """
+    Calculate a confidence interval for a population mean.
+    """
+    n = len(values)
+    sample_mean = values.mean()
+    sample_std = values.std()
+    # Standard error
+    standard_error = (sample_std / np.sqrt(n))
+
+    # z critical value
+    z_critical = stats.norm.ppf((1 + confidence) / 2)
+
+    # Margin of error
+    margin_error = (z_critical * standard_error)
+
+    # Confidence interval
+    lower_bound = (sample_mean - margin_error)
+
+    upper_bound = (sample_mean + margin_error)
+
+    return (sample_mean, standard_error, lower_bound, upper_bound)
+
+#Defender confidence interval
+(def_mean, def_se, def_ci_lower, def_ci_upper) = mean_confidence_interval(def_sample, CONFIDENCE_LEVEL)
+
+# Midfielder confidence interval
+(mid_mean, mid_se, mid_ci_lower, mid_ci_upper) = mean_confidence_interval(mid_sample, CONFIDENCE_LEVEL)
+
+print("\nDefenders:")
+print(f"Mean = {def_mean:.2f} minutes")
+print(f"Standard Error = {def_se:.2f}")
+print(f"95% CI = [{def_ci_lower:.2f}, {def_ci_upper:.2f}]")
+print("\nMidfielders:")
+print(f"Mean = {mid_mean:.2f} minutes")
+print(f"Standard Error = {mid_se:.2f}")
+print(f"95% CI = [{mid_ci_lower:.2f}, {mid_ci_upper:.2f}]")
+print(f"95% CI = [{mid_ci_lower:.2f}, {mid_ci_upper:.2f}]")
+
+# Create confidence interval table
+confidence_table = pd.DataFrame(
+    {
+        "Group": [
+            "Defenders (DF)",
+            "Midfielders (MF)"
+        ],
+        "Sample Size": [
+            len(def_sample),
+            len(mid_sample)
+        ],
+        "Mean": [
+            def_mean,
+            mid_mean
+        ],
+        "Standard Error": [
+            def_se,
+            mid_se
+        ],
+        "95% CI Lower": [
+            def_ci_lower,
+            mid_ci_lower
+        ],
+        "95% CI Upper": [
+            def_ci_upper,
+            mid_ci_upper
+        ]
+    }
+)
+
+# Save confidence interval results
+confidence_table.round(3).to_csv("confidence_intervals.csv", index=False)
