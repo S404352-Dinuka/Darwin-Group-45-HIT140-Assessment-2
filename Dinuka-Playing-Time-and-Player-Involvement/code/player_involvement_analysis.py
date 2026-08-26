@@ -74,6 +74,13 @@ df["Pos"] = (
     .str.upper()
 )
 
+#Convert numerical variables to numeric data types
+numeric_columns = ["MP", "Mn/MP"]
+for column in numeric_columns:
+    df[column] = pd.to_numeric(
+        df[column],
+        errors="coerce"
+    )
 
 # Check duplicate rows
 duplicate_rows = df.duplicated().sum()
@@ -169,3 +176,27 @@ print(
     "\nCleaned dataset saved as: "
     "../data/processed/world_cup_2026_playing_time_clean.csv"
 )
+
+##### POPULATION AND SAMPLING #####
+print("=" * 70)
+print("POPULATION AND SAMPLING")
+print("=" * 70)
+
+
+# Define the eligible population
+#
+# 1. Players classified exactly as DF or MF
+# 2. Players who appeared in at least one match
+# 3. Players with a valid positive Mn/MP value
+population = df.copy()
+population_summary = (
+    population
+    .groupby("Pos")["Mn/MP"]
+    .agg(
+        Count="count",
+        Mean="mean",
+        Standard_Deviation="std"
+    )
+)
+print("\nEligible population:")
+print(population_summary.round(2))
