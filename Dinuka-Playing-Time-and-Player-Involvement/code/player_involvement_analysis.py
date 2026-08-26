@@ -200,3 +200,10 @@ population_summary = (
 )
 print("\nEligible population:")
 print(population_summary.round(2))
+
+# Separate Defenders and Midfielders
+defenders = population[population["Pos"] == "DF"].copy()
+midfielders = population[population["Pos"] == "MF"].copy()
+print(f"\nEligible defenders: {len(defenders)}")
+print(f"Eligible midfielders: {len(midfielders)}")
+
