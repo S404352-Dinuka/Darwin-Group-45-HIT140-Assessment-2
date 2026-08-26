@@ -327,3 +327,17 @@ print(descriptive_table.round(2))
 
 # Save descriptive statistics
 descriptive_table.round(3).to_csv("descriptive_statistics.csv")
+
+# using the 1.5 x IQR rule to identify possible outliers
+print("\nPossible outliers using the 1.5 x IQR rule:")
+for label, values in [("Defenders", def_sample), ("Midfielders", mid_sample)]:
+    q1 = values.quantile(0.25)
+    q3 = values.quantile(0.75)
+    iqr = (q3 - q1)
+    lower_bound = (q1 - 1.5 * iqr)
+    upper_bound = (q3 + 1.5 * iqr)
+    outliers = values[(values < lower_bound) | (values > upper_bound)]
+    print(f"\n{label}")
+    print(f"Lower bound: {lower_bound:.2f}")
+    print(f"Upper bound: {upper_bound:.2f}")
+    print(f"Number of possible outliers: {len(outliers)}")
