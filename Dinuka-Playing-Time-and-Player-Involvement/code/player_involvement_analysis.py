@@ -207,3 +207,25 @@ midfielders = population[population["Pos"] == "MF"].copy()
 print(f"\nEligible defenders: {len(defenders)}")
 print(f"Eligible midfielders: {len(midfielders)}")
 
+# Check sufficient players are available for sampling
+if len(defenders) < SAMPLE_SIZE_PER_GROUP:
+    raise ValueError("Not enough defenders for the requested sample size.")
+
+if len(midfielders) < SAMPLE_SIZE_PER_GROUP:
+    raise ValueError("Not enough midfielders for the requested sample size.")
+
+# A random sample of 150 eligible defenders and 150 eligible midfielders is selected
+def_sample_df = defenders.sample(n=SAMPLE_SIZE_PER_GROUP, random_state=RANDOM_SEED)
+mid_sample_df = midfielders.sample(n=SAMPLE_SIZE_PER_GROUP, random_state=RANDOM_SEED)
+
+
+# Combine the two samples
+sample = pd.concat([def_sample_df, mid_sample_df], ignore_index=True)
+
+print(f"\nTotal sample size: " f"{len(sample)}")
+print("\nSample size by position:")
+print(sample["Pos"].value_counts())
+
+# Numerical variables used in the statistical analysis
+def_sample = (def_sample_df["Mn/MP"])
+mid_sample = (mid_sample_df["Mn/MP"])
