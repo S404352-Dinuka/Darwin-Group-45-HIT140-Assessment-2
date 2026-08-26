@@ -13,6 +13,8 @@ Data source:
 
 # Import required libraries
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 ##### DATA LOADING #####
 
@@ -341,3 +343,30 @@ for label, values in [("Defenders", def_sample), ("Midfielders", mid_sample)]:
     print(f"Lower bound: {lower_bound:.2f}")
     print(f"Upper bound: {upper_bound:.2f}")
     print(f"Number of possible outliers: {len(outliers)}")
+
+##### VISUALISATION #####
+
+print("\n" + "=" * 70)
+print("VISUALISATION")
+print("=" * 70)
+
+
+#generated histogram of minutes played per appearance for defenders and midfielders
+BIN_WIDTH = 10
+max_value = max(def_sample.max(), mid_sample.max())
+bins = np.arange(0, max_value + BIN_WIDTH, BIN_WIDTH)
+
+plt.figure(figsize=(8, 5))
+plt.hist(def_sample, bins=bins, alpha=0.6, label="Defenders (DF)", edgecolor="black")
+plt.hist(mid_sample, bins=bins, alpha=0.6, label="Midfielders (MF)", edgecolor="black")
+plt.title("Distribution of Minutes Played per Appearance")
+plt.xlabel("Minutes played per appearance (Mn/MP)")
+plt.ylabel("Number of players")
+plt.legend()
+plt.grid(axis="y",alpha=0.3)
+plt.tight_layout()
+plt.savefig("playing_time_histogram.png", dpi=300)
+plt.close()
+
+print("Histogram saved as: " + "playing_time_histogram.png")
+
