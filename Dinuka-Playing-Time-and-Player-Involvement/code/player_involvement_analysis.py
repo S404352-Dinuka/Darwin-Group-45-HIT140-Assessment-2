@@ -448,3 +448,71 @@ confidence_table = pd.DataFrame(
 
 # Save confidence interval results
 confidence_table.round(3).to_csv("confidence_intervals.csv", index=False)
+
+##### INDEPENDENT TWO-SAMPLE t-TEST #####
+
+print("\n" + "=" * 70)
+print("SECTION 7: TWO-SAMPLE t-TEST")
+print("=" * 70)
+
+
+#Perform independent two-sample t-test
+t_statistic, p_value = stats.ttest_ind( def_sample,mid_sample, equal_var=False)
+
+
+print("\nTwo-sample t-test results:")
+print(f"Defender mean: {def_sample.mean():.2f}")
+print(f"Midfielder mean: {mid_sample.mean():.2f}")
+
+mean_difference = def_sample.mean() - mid_sample.mean()
+
+print(f"Difference in sample means (DF - MF): {mean_difference:.2f} minutes")
+print(f"t statistic: {t_statistic:.4f}")
+
+# Report very small p-values as p < 0.001 rather than 0.000000
+if p_value < 0.001:
+    print("p-value: < 0.001")
+else:
+    print(f"p-value: {p_value:.4f}")
+
+print(f"Significance level: {ALPHA}")
+
+
+# Statistical decision
+if p_value < ALPHA:
+    decision = ("Reject H0")
+    interpretation = ("There is statistically significant evidence of a difference "
+        "in average minutes played per appearance between defenders and midfielders."
+    )
+else:
+    decision = ("Fail to reject H0")
+    interpretation = (
+        "There is insufficient statistical evidence of a difference "
+        "in average minutes played per appearance between defenders "
+        "and midfielders."
+    )
+
+
+print(f"\nDecision: {decision}")
+print(f"Interpretation: {interpretation}")
+
+# Save t-test results
+ttest_results = pd.DataFrame(
+    [
+        {
+            "Test":"Independent two-sample t-test",
+            "Mean Defenders": round(def_sample.mean(), 3),
+            "Mean Midfielders": round(mid_sample.mean(), 3),
+            "Mean Difference DF-MF":round(mean_difference, 3),
+            "t Statistic": round( t_statistic, 4),
+            "p Value": p_value,
+            "Alpha": ALPHA,
+            "Decision": decision
+        }
+    ]
+)
+
+ttest_results.to_csv(
+    "../outputs/ttest_results.csv",
+    index=False
+)
