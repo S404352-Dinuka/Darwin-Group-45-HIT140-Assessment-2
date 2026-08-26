@@ -229,3 +229,21 @@ print(sample["Pos"].value_counts())
 # Numerical variables used in the statistical analysis
 def_sample = (def_sample_df["Mn/MP"])
 mid_sample = (mid_sample_df["Mn/MP"])
+
+# Compare population and sample means
+sampling_check = pd.DataFrame(
+    {"Population Mean": [defenders["Mn/MP"].mean(), midfielders["Mn/MP"].mean()],
+    "Sample Mean": [
+            def_sample.mean(),
+            mid_sample.mean()
+        ]
+    },
+    index=[
+        "Defenders (DF)",
+        "Midfielders (MF)"
+    ]
+)
+print("\nPopulation vs sample means:")
+print(sampling_check.round(2))
+sample.to_csv("world_cup_2026_playing_time_sample.csv", index=False)
+print("\nSample saved as: world_cup_2026_playing_time_sample.csv")
