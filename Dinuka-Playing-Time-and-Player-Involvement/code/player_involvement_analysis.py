@@ -247,3 +247,83 @@ print("\nPopulation vs sample means:")
 print(sampling_check.round(2))
 sample.to_csv("world_cup_2026_playing_time_sample.csv", index=False)
 print("\nSample saved as: world_cup_2026_playing_time_sample.csv")
+
+##### DESCRIPTIVE STATISTICS #####
+
+print("\n" + "=" * 70)
+print("DESCRIPTIVE STATISTICS")
+print("\n" + "=" * 70)
+
+def descriptive_statistics(values):
+    """
+    Calculate descriptive statistics for one numerical sample
+    """
+
+    q1 = values.quantile(
+        0.25
+    )
+
+    q3 = values.quantile(
+        0.75
+    )
+
+    return {
+
+        "Count":
+            len(values),
+
+        "Mean":
+            values.mean(),
+
+        "Median":
+            values.median(),
+
+        "Standard Deviation":
+            values.std(),
+
+        "Minimum":
+            values.min(),
+
+        "Q1":
+            q1,
+
+        "Q3":
+            q3,
+
+        "IQR":
+            q3 - q1,
+
+        "Maximum":
+            values.max(),
+
+        "Range":
+            values.max()
+            -
+            values.min()
+    }
+
+
+# Calculate descriptive statistics
+def_stats = descriptive_statistics(
+    def_sample
+)
+mid_stats = descriptive_statistics(
+    mid_sample
+)
+
+# Create descriptive statistics table
+descriptive_table = pd.DataFrame(
+    {
+        "Defenders (DF)":
+            def_stats,
+
+        "Midfielders (MF)":
+            mid_stats
+    }
+)
+
+print("\nDescriptive statistics:")
+print(descriptive_table.round(2))
+
+# Save descriptive statistics
+descriptive_table.round(3).to_csv("descriptive_statistics.csv")
