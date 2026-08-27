@@ -103,6 +103,27 @@ fwd_low, fwd_high = statsm._zconfint_generic(
 print("Forwards Fouls per 90 Mins Mean: ", fwd_mean)
 print("Forwards Fouls per 90 Mins 95% Confidence Interval: ", fwd_low, " to ", fwd_high) 
 
+#Use the calucalted values and perform a two sample t test from the forward sample and midfielder sample
+t_stats, p_val = stats.ttest_ind_from_stats(
+    midf_mean,
+    midf_std,
+    midf_range,
+    fwd_mean,
+    fwd_std,
+    fwd_range,
+    equal_var=False,
+    alternative="greater"
+)
+
+print("T Stats: ", t_stats)
+
+#Compare the p val calucalted with 0.05 significance level
+print("P-Val: " , p_val)
+if p_val < 0.05:
+    print("Reject Hypothesis")
+else:
+    print("Approve")
+
 #Combine both groups into one dataset
 final_data = pd.concat([midf, fwd])
 final_sample_data = pd.concat([midf_sample, fwd_sample])
