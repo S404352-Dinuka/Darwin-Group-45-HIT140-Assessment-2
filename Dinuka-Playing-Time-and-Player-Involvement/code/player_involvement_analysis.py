@@ -187,7 +187,6 @@ print("=" * 70)
 
 
 # Define the eligible population
-#
 # 1. Players classified exactly as DF or MF
 # 2. Players who appeared in at least one match
 # 3. Players with a valid positive Mn/MP value
@@ -374,7 +373,7 @@ print("Histogram saved as: " + "playing_time_histogram.png")
 ##### 95% CONFIDENCE INTERVALS #####
 
 print("\n" + "=" * 70)
-print("SECTION 6: 95% CONFIDENCE INTERVALS")
+print("95% CONFIDENCE INTERVALS")
 print("=" * 70)
 
 def mean_confidence_interval(values, confidence=0.95):
@@ -452,7 +451,7 @@ confidence_table.round(3).to_csv("../outputs/confidence_intervals.csv", index=Fa
 ##### INDEPENDENT TWO-SAMPLE t-TEST #####
 
 print("\n" + "=" * 70)
-print("SECTION 7: TWO-SAMPLE t-TEST")
+print("TWO-SAMPLE t-TEST")
 print("=" * 70)
 
 
@@ -516,3 +515,69 @@ ttest_results.to_csv(
     "../outputs/ttest_results.csv",
     index=False
 )
+
+##### RESULTS SUMMARY #####
+
+print("\n" + "=" * 70)
+print("RESULTS SUMMARY")
+print("=" * 70)
+
+summary_table = pd.DataFrame(
+    {
+        "Statistic": [
+            "Sample size",
+            "Mean Mn/MP",
+            "Median Mn/MP",
+            "Standard deviation",
+            "95% CI lower",
+            "95% CI upper"
+        ],
+
+        "Defenders (DF)": [
+            len(def_sample),
+            round(def_sample.mean(), 2),
+            round(def_sample.median(), 2),
+            round(def_sample.std(), 2),
+            round(def_ci_lower, 2),
+            round(def_ci_upper, 2)
+        ],
+
+        "Midfielders (MF)": [
+            len(mid_sample),
+            round(mid_sample.mean(), 2),
+            round(mid_sample.median(), 2),
+            round(mid_sample.std(), 2),
+            round(mid_ci_lower, 2),
+            round(mid_ci_upper, 2)
+        ]
+    }
+)
+
+print("\nSummary table:")
+print(summary_table.to_string(index=False))
+print("\nStatistical comparison:")
+print(f"Difference in sample means (DF - MF): {mean_difference:.2f} minutes")
+print(f"t statistic: {t_statistic:.4f}")
+
+if p_value < 0.001:
+    print("p-value: < 0.001")
+else:
+    print(f"p-value: {p_value:.4f}")
+print(f"Decision: {decision}")
+
+
+# Save summary
+summary_table.to_csv("../outputs/summary_table.csv", index=False)
+
+print("\n" + "=" * 70)
+print("ANALYSIS COMPLETE")
+print("=" * 70)
+
+print("\nFiles generated:")
+print("1. world_cup_2026_playing_time_clean.csv")
+print("2. world_cup_2026_playing_time_sample.csv")
+print("3. descriptive_statistics.csv")
+print("4. confidence_intervals.csv")
+print("5. ttest_results.csv")
+print("6. summary_table.csv")
+print("7. playing_time_histogram.png")
