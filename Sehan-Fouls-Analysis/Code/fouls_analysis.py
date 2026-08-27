@@ -1,4 +1,7 @@
 import pandas as pd
+import scipy.stats as stats
+import statsmodels.stats.weightstats as statsm
+import math
 
 #Read the data in the csv file
 data = pd.read_csv("../data/raw/misc_stats_raw.csv")
@@ -65,6 +68,40 @@ print(midf_sample["Fouls_90"].describe())
 
 print("Forwards Fouls per 90 Mins from sample:")
 print(fwd_sample["Fouls_90"].describe())
+
+#Gets the values for fouls per 90 and calculates the mean, standard deivation, lenght and standard error to get the confidence interval for midfielders
+midf_foul_values = midf_sample["Fouls_90"].to_numpy()
+midf_mean = stats.tmean(midf_foul_values)
+midf_std = stats.tstd(midf_foul_values)
+midf_range = len(midf_foul_values)
+midf_error = midf_std / math.sqrt(midf_range)
+
+midf_low, midf_high = statsm._zconfint_generic(
+    midf_mean,
+    midf_error,
+    alpha=0.05,
+    alternative="two-sided"
+)
+
+print("Midfielder Fouls per 90 Mins Mean: ", midf_mean)
+print("Midfielder Fouls per 90 Mins 95% Confidence Interval: ", midf_low, " to ", midf_high) 
+
+#Get forward fouls per 90 seperately and calucate mean, standard deviation, lenght, standard error to get the confidence interval
+fwd_foul_values = fwd_sample["Fouls_90"].to_numpy()
+fwd_mean = stats.tmean(fwd_foul_values)
+fwd_std = stats.tstd(fwd_foul_values)
+fwd_range = len(fwd_foul_values)
+fwd_error = fwd_std / math.sqrt(fwd_range)
+
+fwd_low, fwd_high = statsm._zconfint_generic(
+    fwd_mean,
+    fwd_error,
+    alpha=0.05,
+    alternative="two-sided"
+)
+
+print("Forwards Fouls per 90 Mins Mean: ", fwd_mean)
+print("Forwards Fouls per 90 Mins 95% Confidence Interval: ", fwd_low, " to ", fwd_high) 
 
 #Combine both groups into one dataset
 final_data = pd.concat([midf, fwd])
