@@ -329,7 +329,7 @@ print("\nDescriptive statistics:")
 print(descriptive_table.round(2))
 
 # Save descriptive statistics
-descriptive_table.round(3).to_csv("../outputs/descriptive_statistics.csv", index=False)
+descriptive_table.round(3).to_csv("../outputs/descriptive_statistics.csv")
 
 # using the 1.5 x IQR rule to identify possible outliers
 print("\nPossible outliers using the 1.5 x IQR rule:")
@@ -413,7 +413,6 @@ print(f"95% CI = [{def_ci_lower:.2f}, {def_ci_upper:.2f}]")
 print("\nMidfielders:")
 print(f"Mean = {mid_mean:.2f} minutes")
 print(f"Standard Error = {mid_se:.2f}")
-print(f"95% CI = [{mid_ci_lower:.2f}, {mid_ci_upper:.2f}]")
 print(f"95% CI = [{mid_ci_lower:.2f}, {mid_ci_upper:.2f}]")
 
 # Create confidence interval table
