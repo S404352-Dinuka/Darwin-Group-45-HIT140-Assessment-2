@@ -29,7 +29,7 @@ SECTION_WIDTH = 70
 CONFIDENCE_LEVEL = 1 - ALPHA
 
 # Raw dataset path
-RAW_PATH = "../data/raw/world_cup_2026_player_involvement_raw.csv"
+RAW_PATH = "../data/raw/world_cup_2026_playing_time_raw.csv"
 
 # Load dataset
 raw = pd.read_csv(RAW_PATH)
