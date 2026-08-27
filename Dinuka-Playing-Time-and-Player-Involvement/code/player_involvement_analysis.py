@@ -1,5 +1,5 @@
 """
-FIFA World Cup 2026 - Analytic Task: Playing Time & Player Involvement
+FIFA World Cup 2026 - Analytic Task: Playing Time by Player Position
 Author: Dinuka
 
 Analytic question:
@@ -61,10 +61,28 @@ print("=" * SECTION_WIDTH)
 
 
 # Select variables related to the analytical question
+#
+# Pos identifies the comparison groups: Defenders and Midfielders.
+#
+# Mn/MP is the response variable because it represents the typical
+# amount of playing time each time a player appears.
+#
+# Total minutes alone may be influenced by the number of appearances,
+# so Mn/MP provides a more comparable playing-time measure.
+#
+# MP and Min are retained for eligibility and validation checks.
+#
+# Player and Player_ID are retained for record identification and
+# duplicate checking.
+#
+# Per-90 standardisation is not required because playing time itself
+# is the variable being analysed.
+
 columns_needed = [
     "Player",
     "Pos",
     "MP",
+    "Min",
     "Mn/MP",
     "Player_ID"
 ]
@@ -79,7 +97,8 @@ df["Pos"] = (
 )
 
 #Convert numerical variables to numeric data types
-numeric_columns = ["MP", "Mn/MP"]
+numeric_columns = ["MP", "Min", "Mn/MP"]
+
 for column in numeric_columns:
     df[column] = pd.to_numeric(
         df[column],
@@ -130,6 +149,30 @@ print(
 )
 
 
+# Validate the supplied Mn/MP variable
+#
+# Mn/MP is already provided by FBref, but it can also be calculated
+# from total minutes divided by match appearances.
+#
+# This check helps confirm that the supplied variable is consistent
+# with the underlying playing-time data.
+
+df["Calculated_Mn_MP"] = df["Min"] / df["MP"]
+df["Mn_MP_Difference"] = abs(df["Mn/MP"]- df["Calculated_Mn_MP"])
+
+print("\nValidation of supplied Mn/MP:")
+
+print(
+    df[
+        [
+            "Mn/MP",
+            "Calculated_Mn_MP",
+            "Mn_MP_Difference"
+        ]
+    ].describe()
+)
+
+
 # Removing missing or invalid Mn/MP values
 before = len(df)
 df = df.dropna(
@@ -144,7 +187,9 @@ print(
 )
 
 
-# Keep Defenders and Midfielders only - Only players classified exactly as DF or MF are included.
+# Keep Defenders and Midfielders only
+#
+# Only players classified exactly as DF or MF are included.
 #
 # Mixed-position players such as DFMF and MFDF are excluded because
 # they cannot be clearly assigned to one comparison group.
@@ -182,12 +227,14 @@ print(
 )
 
 ##### POPULATION AND SAMPLING #####
-print("=" * SECTION_WIDTH)
+
+print("\n" + "=" * SECTION_WIDTH)
 print("POPULATION AND SAMPLING")
 print("=" * SECTION_WIDTH)
 
 
 # Define the eligible population
+#
 # 1. Players classified exactly as DF or MF
 # 2. Players who appeared in at least one match
 # 3. Players with a valid positive Mn/MP value
@@ -210,6 +257,7 @@ midfielders = population[population["Pos"] == "MF"].copy()
 print(f"\nEligible defenders: {len(defenders)}")
 print(f"Eligible midfielders: {len(midfielders)}")
 
+
 # Check sufficient players are available for sampling
 if len(defenders) < SAMPLE_SIZE_PER_GROUP:
     raise ValueError("Not enough defenders for the requested sample size.")
@@ -217,7 +265,13 @@ if len(defenders) < SAMPLE_SIZE_PER_GROUP:
 if len(midfielders) < SAMPLE_SIZE_PER_GROUP:
     raise ValueError("Not enough midfielders for the requested sample size.")
 
-# A random sample of 150 eligible defenders and 150 eligible midfielders is selected
+# A random sample of 150 eligible defenders and
+# 150 eligible midfielders is selected.
+#
+# Equal sample sizes provide a balanced comparison.
+#
+# random_state ensures that the same sample can be reproduced.
+
 def_sample_df = defenders.sample(n=SAMPLE_SIZE_PER_GROUP, random_state=RANDOM_SEED)
 mid_sample_df = midfielders.sample(n=SAMPLE_SIZE_PER_GROUP, random_state=RANDOM_SEED)
 
@@ -230,8 +284,9 @@ print("\nSample size by position:")
 print(sample["Pos"].value_counts())
 
 # Numerical variables used in the statistical analysis
-def_sample = (def_sample_df["Mn/MP"])
-mid_sample = (mid_sample_df["Mn/MP"])
+def_sample = def_sample_df["Mn/MP"]
+mid_sample = mid_sample_df["Mn/MP"]
+
 
 # Compare population and sample means
 sampling_check = pd.DataFrame(
@@ -247,7 +302,10 @@ sampling_check = pd.DataFrame(
     ]
 )
 print("\nPopulation vs sample means:")
+
 print(sampling_check.round(2))
+
+# Save sample
 sample.to_csv("../data/processed/world_cup_2026_playing_time_sample.csv", index=False)
 print("\nSample saved as: world_cup_2026_playing_time_sample.csv")
 
@@ -329,18 +387,61 @@ print("\nDescriptive statistics:")
 print(descriptive_table.round(2))
 
 # Save descriptive statistics
-descriptive_table.round(3).to_csv("../outputs/descriptive_statistics.csv")
+descriptive_table.round(3).to_csv("../outputs/descriptive_statistics.csv", index=False)
 
-# using the 1.5 x IQR rule to identify possible outliers
+# Using the 1.5 x IQR rule to identify possible outliers
+#
+# Possible outliers are identified but not automatically removed.
+#
+# Short playing times may represent genuine substitute appearances,
+# so they remain meaningful observations for this analysis.
+
 print("\nPossible outliers using the 1.5 x IQR rule:")
-for label, values in [("Defenders", def_sample), ("Midfielders", mid_sample)]:
-    q1 = values.quantile(0.25)
-    q3 = values.quantile(0.75)
-    iqr = (q3 - q1)
-    lower_bound = (q1 - 1.5 * iqr)
-    upper_bound = (q3 + 1.5 * iqr)
-    outliers = values[(values < lower_bound) | (values > upper_bound)]
-    print(f"\n{label}")
+
+for label, values in [
+    ("Defenders", def_sample),
+    ("Midfielders", mid_sample)
+]:
+
+    q1 = values.quantile(
+        0.25
+    )
+
+    q3 = values.quantile(
+        0.75
+    )
+
+    iqr = (
+        q3
+        -
+        q1
+    )
+
+
+    lower_bound = (
+        q1
+        -
+        1.5 * iqr
+    )
+
+    upper_bound = (
+        q3
+        +
+        1.5 * iqr
+    )
+
+
+    outliers = values[
+        (values < lower_bound)
+        |
+        (values > upper_bound)
+    ]
+
+
+    print(
+        f"\n{label}"
+    )
+
     print(f"Lower bound: {lower_bound:.2f}")
     print(f"Upper bound: {upper_bound:.2f}")
     print(f"Number of possible outliers: {len(outliers)}")
@@ -352,16 +453,69 @@ print("VISUALISATION")
 print("=" * SECTION_WIDTH)
 
 
-#generated histogram of minutes played per appearance for defenders and midfielders
+# Generate histogram of minutes played per appearance for
+# Defenders and Midfielders.
+#
+# Both groups use the same 10-minute intervals for comparison.
+
 BIN_WIDTH = 10
 max_value = max(def_sample.max(), mid_sample.max())
-bins = np.arange(0, max_value + BIN_WIDTH, BIN_WIDTH)
+bins = np.arange(
+    0,
+    max_value + BIN_WIDTH,
+    BIN_WIDTH
+)
 
-plt.figure(figsize=(8, 5))
-plt.hist(def_sample, bins=bins, alpha=0.6, label="Defenders (DF)", edgecolor="black")
-plt.hist(mid_sample, bins=bins, alpha=0.6, label="Midfielders (MF)", edgecolor="black")
-plt.title("Distribution of Minutes Played per Appearance")
-plt.xlabel("Minutes played per appearance (Mn/MP)")
+
+plt.figure(
+    figsize=(8, 5)
+)
+
+
+plt.hist(
+    def_sample,
+    bins=bins,
+    alpha=0.6,
+    label="Defenders (DF)",
+    edgecolor="black"
+)
+
+
+plt.hist(
+    mid_sample,
+    bins=bins,
+    alpha=0.6,
+    label="Midfielders (MF)",
+    edgecolor="black"
+)
+
+
+plt.axvline(
+    def_sample.mean(),
+    color="#1f4e79",
+    linestyle="--",
+    linewidth=2,
+    label=f"DF mean = {def_sample.mean():.1f}"
+)
+
+
+plt.axvline(
+    mid_sample.mean(),
+    color="#a34700",
+    linestyle="--",
+    linewidth=2,
+    label=f"MF mean = {mid_sample.mean():.1f}"
+)
+
+
+plt.title(
+    "Distribution of Minutes Played per Appearance"
+)
+
+plt.xlabel(
+    "Minutes played per appearance (Mn/MP)"
+)
+
 plt.ylabel("Number of players")
 plt.legend()
 plt.grid(axis="y",alpha=0.3)
@@ -369,7 +523,12 @@ plt.tight_layout()
 plt.savefig("../outputs/playing_time_histogram.png", dpi=300)
 plt.close()
 
-print("Histogram saved as: " + "playing_time_histogram.png")
+
+print(
+    "Histogram saved as: "
+    "playing_time_histogram.png"
+)
+
 
 ##### 95% CONFIDENCE INTERVALS #####
 
@@ -394,9 +553,18 @@ def mean_confidence_interval(values, confidence=0.95):
     margin_error = (z_critical * standard_error)
 
     # Confidence interval
-    lower_bound = (sample_mean - margin_error)
+    lower_bound = (
+        sample_mean
+        -
+        margin_error
+    )
 
-    upper_bound = (sample_mean + margin_error)
+    upper_bound = (
+        sample_mean
+        +
+        margin_error
+    )
+
 
     return (sample_mean, standard_error, lower_bound, upper_bound)
 
@@ -407,13 +575,40 @@ def mean_confidence_interval(values, confidence=0.95):
 (mid_mean, mid_se, mid_ci_lower, mid_ci_upper) = mean_confidence_interval(mid_sample, CONFIDENCE_LEVEL)
 
 print("\nDefenders:")
-print(f"Mean = {def_mean:.2f} minutes")
-print(f"Standard Error = {def_se:.2f}")
-print(f"95% CI = [{def_ci_lower:.2f}, {def_ci_upper:.2f}]")
+
+print(
+    f"Mean = "
+    f"{def_mean:.2f} minutes"
+)
+
+print(
+    f"Standard Error = "
+    f"{def_se:.2f}"
+)
+
+print(
+    f"95% CI = "
+    f"[{def_ci_lower:.2f}, {def_ci_upper:.2f}]"
+)
+
+
 print("\nMidfielders:")
-print(f"Mean = {mid_mean:.2f} minutes")
-print(f"Standard Error = {mid_se:.2f}")
-print(f"95% CI = [{mid_ci_lower:.2f}, {mid_ci_upper:.2f}]")
+
+print(
+    f"Mean = "
+    f"{mid_mean:.2f} minutes"
+)
+
+print(
+    f"Standard Error = "
+    f"{mid_se:.2f}"
+)
+
+print(
+    f"95% CI = "
+    f"[{mid_ci_lower:.2f}, {mid_ci_upper:.2f}]"
+)
+
 
 # Create confidence interval table
 confidence_table = pd.DataFrame(
@@ -455,45 +650,133 @@ print("TWO-SAMPLE t-TEST")
 print("=" * SECTION_WIDTH)
 
 
+# Hypotheses:
+#
+# H0: The population mean Mn/MP for Defenders is equal to the
+#     population mean Mn/MP for Midfielders.
+#
+# H1: The population mean Mn/MP for Defenders is different from the
+#     population mean Mn/MP for Midfielders.
+#
+# Significance level: alpha = 0.05
+#
+# A two-sided test is used because the analytical question asks
+# whether a difference exists, rather than predicting a direction.
+
+
 #Perform independent two-sample t-test
-t_statistic, p_value = stats.ttest_ind( def_sample,mid_sample, equal_var=False)
+#
+# equal_var=False means equal population variances are not assumed.
+
+t_statistic, p_value = stats.ttest_ind(
+    def_sample,
+    mid_sample,
+    equal_var=False,
+    alternative="two-sided"
+)
 
 
-print("\nTwo-sample t-test results:")
-print(f"Defender mean: {def_sample.mean():.2f}")
-print(f"Midfielder mean: {mid_sample.mean():.2f}")
+print(
+    "\nTwo-sample t-test results:"
+)
 
-mean_difference = def_sample.mean() - mid_sample.mean()
+print(
+    f"Defender mean: "
+    f"{def_sample.mean():.2f}"
+)
 
-print(f"Difference in sample means (DF - MF): {mean_difference:.2f} minutes")
-print(f"t statistic: {t_statistic:.4f}")
+print(
+    f"Midfielder mean: "
+    f"{mid_sample.mean():.2f}"
+)
+
+
+mean_difference = (
+    def_sample.mean()
+    -
+    mid_sample.mean()
+)
+
+
+print(
+    f"Difference in sample means (DF - MF): "
+    f"{mean_difference:.2f} minutes"
+)
+
+print(
+    f"t statistic: "
+    f"{t_statistic:.4f}"
+)
+
 
 # Report very small p-values as p < 0.001 rather than 0.000000
 if p_value < 0.001:
     print("p-value: < 0.001")
 else:
-    print(f"p-value: {p_value:.4f}")
 
-print(f"Significance level: {ALPHA}")
+    print(
+        f"p-value: "
+        f"{p_value:.4f}"
+    )
+
+
+print(
+    f"Significance level: "
+    f"{ALPHA}"
+)
 
 
 # Statistical decision
 if p_value < ALPHA:
-    decision = ("Reject H0")
-    interpretation = ("There is statistically significant evidence of a difference "
-        "in average minutes played per appearance between defenders and midfielders."
+    decision = "Reject H0"
+    interpretation = (
+        "There is statistically significant evidence of a difference "
+        "in average minutes played per appearance between defenders "
+        "and midfielders."
     )
+    if mean_difference > 0:
+
+        direction = (
+            f"Defenders played approximately {mean_difference:.2f} "
+            f"more minutes per appearance on average than midfielders."
+        )
+    else:
+        direction = (
+            f"Midfielders played approximately "
+            f"{abs(mean_difference):.2f} more minutes per appearance "
+            f"on average than defenders."
+        )
 else:
-    decision = ("Fail to reject H0")
+
+    decision = "Fail to reject H0"
+
     interpretation = (
         "There is insufficient statistical evidence of a difference "
         "in average minutes played per appearance between defenders "
         "and midfielders."
     )
 
+    direction = ""
 
-print(f"\nDecision: {decision}")
-print(f"Interpretation: {interpretation}")
+
+print(
+    f"\nDecision: "
+    f"{decision}"
+)
+
+print(
+    f"Interpretation: "
+    f"{interpretation}"
+)
+
+
+if direction:
+
+    print(
+        f"Direction: "
+        f"{direction}"
+    )
+
 
 # Save t-test results
 ttest_results = pd.DataFrame(
@@ -563,11 +846,53 @@ if p_value < 0.001:
     print("p-value: < 0.001")
 else:
     print(f"p-value: {p_value:.4f}")
+
 print(f"Decision: {decision}")
 
+if direction:
+    print(f"Direction: {direction}")
 
 # Save summary
-summary_table.to_csv("../outputs/summary_table.csv", index=False)
+summary_table.to_csv(
+    "../outputs/summary_table.csv",
+    index=False
+)
+
+
+##### METHODOLOGICAL CONSIDERATIONS #####
+
+print("\n" + "=" * SECTION_WIDTH)
+print("METHODOLOGICAL CONSIDERATIONS")
+print("=" * SECTION_WIDTH)
+
+
+print(
+    "1. Mixed-position players were excluded to avoid ambiguous "
+    "classification between Defenders and Midfielders."
+)
+
+
+print(
+    "2. Possible statistical outliers were retained because short "
+    "playing times may represent genuine substitute appearances."
+)
+
+
+print(
+    "3. Player observations are treated as independent, although "
+    "players from the same team may share tactical and match-related "
+    "influences."
+)
+
+
+print(
+    "4. The analysis identifies an association between player position "
+    "and playing time; it does not establish that position causes the "
+    "difference."
+)
+
+
+##### ANALYSIS COMPLETE #####
 
 print("\n" + "=" * SECTION_WIDTH)
 print("ANALYSIS COMPLETE")
