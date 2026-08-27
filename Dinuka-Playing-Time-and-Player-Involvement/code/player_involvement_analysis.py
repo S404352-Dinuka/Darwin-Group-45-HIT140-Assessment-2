@@ -23,6 +23,7 @@ from scipy import stats
 RANDOM_SEED = 42
 SAMPLE_SIZE_PER_GROUP = 150
 ALPHA = 0.05
+SECTION_WIDTH = 70
 
 # 95% confidence level when alpha = 0.05
 CONFIDENCE_LEVEL = 1 - ALPHA
@@ -33,9 +34,9 @@ RAW_PATH = "../data/raw/world_cup_2026_player_involvement_raw.csv"
 # Load dataset
 raw = pd.read_csv(RAW_PATH)
 
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 print("RAW DATA LOADED")
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 
 print(f"Number of rows: {raw.shape[0]}")
 print(f"Number of columns: {raw.shape[1]}")
@@ -54,9 +55,9 @@ print(raw.isnull().sum())
 
 ##### DATA WRANGLING AND CLEANING #####
 
-print("\n" + "=" * 70)
+print("\n" + "=" * SECTION_WIDTH)
 print("DATA WRANGLING AND CLEANING")
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 
 
 # Select variables related to the analytical question
@@ -181,9 +182,9 @@ print(
 )
 
 ##### POPULATION AND SAMPLING #####
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 print("POPULATION AND SAMPLING")
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 
 
 # Define the eligible population
@@ -252,9 +253,9 @@ print("\nSample saved as: world_cup_2026_playing_time_sample.csv")
 
 ##### DESCRIPTIVE STATISTICS #####
 
-print("\n" + "=" * 70)
+print("\n" + "=" * SECTION_WIDTH)
 print("DESCRIPTIVE STATISTICS")
-print("\n" + "=" * 70)
+print("\n" + "=" * SECTION_WIDTH)
 
 def descriptive_statistics(values):
     """
@@ -346,9 +347,9 @@ for label, values in [("Defenders", def_sample), ("Midfielders", mid_sample)]:
 
 ##### VISUALISATION #####
 
-print("\n" + "=" * 70)
+print("\n" + "=" * SECTION_WIDTH)
 print("VISUALISATION")
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 
 
 #generated histogram of minutes played per appearance for defenders and midfielders
@@ -372,9 +373,9 @@ print("Histogram saved as: " + "playing_time_histogram.png")
 
 ##### 95% CONFIDENCE INTERVALS #####
 
-print("\n" + "=" * 70)
+print("\n" + "=" * SECTION_WIDTH)
 print("95% CONFIDENCE INTERVALS")
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 
 def mean_confidence_interval(values, confidence=0.95):
     """
@@ -450,9 +451,9 @@ confidence_table.round(3).to_csv("../outputs/confidence_intervals.csv", index=Fa
 
 ##### INDEPENDENT TWO-SAMPLE t-TEST #####
 
-print("\n" + "=" * 70)
+print("\n" + "=" * SECTION_WIDTH)
 print("TWO-SAMPLE t-TEST")
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 
 
 #Perform independent two-sample t-test
@@ -518,9 +519,9 @@ ttest_results.to_csv(
 
 ##### RESULTS SUMMARY #####
 
-print("\n" + "=" * 70)
+print("\n" + "=" * SECTION_WIDTH)
 print("RESULTS SUMMARY")
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 
 summary_table = pd.DataFrame(
     {
@@ -569,9 +570,9 @@ print(f"Decision: {decision}")
 # Save summary
 summary_table.to_csv("../outputs/summary_table.csv", index=False)
 
-print("\n" + "=" * 70)
+print("\n" + "=" * SECTION_WIDTH)
 print("ANALYSIS COMPLETE")
-print("=" * 70)
+print("=" * SECTION_WIDTH)
 
 print("\nFiles generated:")
 print("1. world_cup_2026_playing_time_clean.csv")
