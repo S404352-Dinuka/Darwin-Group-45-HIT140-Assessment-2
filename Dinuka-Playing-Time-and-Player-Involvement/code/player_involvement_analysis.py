@@ -255,7 +255,7 @@ print("\nSample saved as: world_cup_2026_playing_time_sample.csv")
 
 print("\n" + "=" * SECTION_WIDTH)
 print("DESCRIPTIVE STATISTICS")
-print("\n" + "=" * SECTION_WIDTH)
+print("=" * SECTION_WIDTH)
 
 def descriptive_statistics(values):
     """
