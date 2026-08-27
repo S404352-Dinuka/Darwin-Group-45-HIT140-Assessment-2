@@ -1,0 +1,11 @@
+Initial Rows - 1080
+Initial Columns - 20
+Final Rows after cleaning - 1039
+Final Columns after cleaning - 5
+Number of Midfielders - 337
+Number of Forwards - 153
+MF Fouls_90 and FW Fouls_90 contain the rate of fouls per 90 minutes for midfielders and forwards, respectively.
+Sample of Forwards and Midfielders - 100
+
+MF sample mean - 1.268179
+FWD sample mean - 1.784145
