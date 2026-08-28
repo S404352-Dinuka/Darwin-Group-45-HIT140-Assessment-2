@@ -40,3 +40,13 @@ print(df.isnull().sum())
 print("\nPlayers with zero minutes of play:")
 print((df["Min"] == 0).sum())
 
+#Remove the rows which has missing values in Save%
+df = df.dropna(subset=["Save%"]).copy()
+
+#checking with the missing values after cleaned save%
+print("\nMissing values after cleaning the Save%:")
+print(df.isnull().sum())
+
+#checking with the dataset count of rows and columns after cleaning save%
+print("\nThe dataset size after cleaning:")
+print(df.shape)
