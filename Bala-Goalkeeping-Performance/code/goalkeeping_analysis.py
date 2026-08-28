@@ -16,3 +16,27 @@ print(raw.columns.tolist())
 print("\n Missing Values:")
 print(raw.isnull().sum())
 
+#checking with the dataset information
+print("\n Dataset information:")
+raw.info()
+
+#checking with the duplicate rows
+print("\nDuplicate rows:")
+print(raw.duplicated().sum())
+
+#select required variables for the analysis
+df = raw[["Player", "Pos", "MP", "Min", "SoTA", "Saves", "Save%"]].copy()
+print("\nThe Selected Variables are :")
+
+#checking with the selected variables
+print(df.head())
+print(df.shape)
+
+#checking with the missing values among selected variables
+print("\nMissing values in the selected variables:")
+print(df.isnull().sum())
+
+#checking with the players who didn't play the game
+print("\nPlayers with zero minutes of play:")
+print((df["Min"] == 0).sum())
+
