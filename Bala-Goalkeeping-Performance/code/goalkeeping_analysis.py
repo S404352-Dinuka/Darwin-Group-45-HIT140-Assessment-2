@@ -50,3 +50,23 @@ print(df.isnull().sum())
 #checking with the dataset count of rows and columns after cleaning save%
 print("\nThe dataset size after cleaning:")
 print(df.shape)
+
+# Calculate the shots on target faced per 90 minutes by goalkeepers
+df["SoTA_per_90"] = df["SoTA"] / df["Min"] * 90
+
+print("\nSoTA per 90 minutes:")
+print(df[["Player", "SoTA", "Min", "SoTA_per_90"]].head())
+
+# Find the median for shots on target per 90 minutes
+median_sota = df["SoTA_per_90"].median()
+
+print("\nMedian SoTA per 90 minutes:")
+print(median_sota)
+
+# Divide the goalkeepers into lower and higher workloads based on median SoTA per 90 
+df["Workload"] = "Lower"
+df.loc[df["SoTA_per_90"] > median_sota, "Workload"] = "Higher"
+
+#checking with the number of goalkeepers in each workload group
+print("\nNumber of goalkeepers in each workload group:")
+print(df["Workload"].value_counts())
