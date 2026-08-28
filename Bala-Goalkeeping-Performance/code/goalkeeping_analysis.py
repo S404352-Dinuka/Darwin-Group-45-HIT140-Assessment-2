@@ -70,3 +70,14 @@ df.loc[df["SoTA_per_90"] > median_sota, "Workload"] = "Higher"
 #checking with the number of goalkeepers in each workload group
 print("\nNumber of goalkeepers in each workload group:")
 print(df["Workload"].value_counts())
+
+#Save the csv file of cleaned data in processed folder
+df.to_csv("data/processed/goalkeeping_clean.csv", index=False)
+
+print("\nCleaned data saved.")
+
+# checking with the descriptive statistics for each workload group
+print("\nDescriptive statistics:")
+print(df.groupby("Workload")["SoTA_per_90"].describe())
+
+
