@@ -77,7 +77,55 @@ df.to_csv("data/processed/goalkeeping_clean.csv", index=False)
 print("\nCleaned data saved.")
 
 # checking with the descriptive statistics for each workload group
+
 print("\nDescriptive statistics:")
-print(df.groupby("Workload")["SoTA_per_90"].describe())
+
+print(df.groupby("Workload")["Save%"].describe())
 
 
+# To visually compare higher and lower workload groups we used boxplot
+
+df.boxplot(column="Save%", by="Workload")
+
+plt.title("Save Percentage by Workload Group")
+plt.suptitle("")
+plt.xlabel("Workload")
+plt.ylabel("Save Percentage")
+
+plt.show()
+
+# 95% confidence intervals for mean Save%
+higher = df[df["Workload"] == "Higher"]["Save%"]
+lower = df[df["Workload"] == "Lower"]["Save%"]
+
+#checking with the mean save% of higher and lower workload groups
+print("\nMean Save%:")
+print("Higher workload:", higher.mean())
+print("Lower workload:", lower.mean())
+
+# Calculating the 95% confidence interval for mean Save%
+
+higher_ci = stats.t.interval(
+    0.95,
+    len(higher) - 1,
+    loc = higher.mean(),
+    scale = stats.sem(higher)
+)
+
+lower_ci = stats.t.interval(
+    0.95,
+    len(lower) - 1,
+    loc = lower.mean(),
+    scale = stats.sem(lower)
+)
+
+print("\n95% Confidence Interval:")
+print("Higher workload:", higher_ci)
+print("Lower workload:", lower_ci)
+
+# Two-sample t-test
+t_test = stats.ttest_ind(higher, lower)
+
+print("\nTwo-sample t-test:")
+print("t-statistic:", t_test.statistic)
+print("p-value:", t_test.pvalue)
