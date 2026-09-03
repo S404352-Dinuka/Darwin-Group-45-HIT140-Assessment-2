@@ -130,17 +130,18 @@ else:
 midf_hist = midf_sample["Fouls_90"].values
 midf_range = ((midf_hist.max()) - (midf_hist.min()))
 bin_width = 0.5
-bin_count = int(midf_range/bin_width)
-plt.hist(midf_hist, bins=bin_count)
+bin_count_midf = int(midf_range/bin_width)
+plt.hist(midf_hist, bins=bin_count_midf)
 plt.title("Midfielders Fouls per 90 Mins")
 plt.xlabel("Fouls per 90 Min")
 plt.ylabel("No. of Midfielders")
 plt.show()
 
 #Creating a histogram by calculating bin count for forwards
-fwd_hist = midf_sample["Fouls_90"].values
-fwd_range = ((midf_hist.max()) - (midf_hist.min()))
-plt.hist(midf_hist, bins=bin_count)
+fwd_hist = fwd_sample["Fouls_90"].values
+fwd_range = ((fwd_hist.max()) - (fwd_hist.min()))
+bin_count_fwd = int(midf_range/bin_width)
+plt.hist(fwd_hist, bins=bin_count_fwd)
 plt.title("Forwards Fouls per 90 Mins")
 plt.xlabel("Fouls per 90 Min")
 plt.ylabel("No. of Forwards")
