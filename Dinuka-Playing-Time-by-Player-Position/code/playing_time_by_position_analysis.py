@@ -326,26 +326,8 @@ ax.errorbar(groups[0], means[0], yerr=[[lower_errors[0]], [upper_errors[0]]], fm
 ax.errorbar(groups[1], means[1], yerr=[[lower_errors[1]], [upper_errors[1]]], fmt="o", markersize=10, capsize=8, linewidth=2, color="#ff7f0e")
 ax.set_ylim(lowest_ci - 3, highest_ci + 5)
 ax.set_xlim(-0.15, 1.15)
-ax.annotate(
-    f"{def_mean:.2f} min",
-    xy=(0, def_mean),
-    xytext=(18, 0),
-    textcoords="offset points",
-    ha="left",
-    va="center",
-    fontsize=11,
-    fontweight="bold"
-)
-ax.annotate(
-    f"{mid_mean:.2f} min",
-    xy=(1, mid_mean),
-    xytext=(-18, 0),
-    textcoords="offset points",
-    ha="right",
-    va="center",
-    fontsize=11,
-    fontweight="bold"
-)
+ax.annotate(f"{def_mean:.2f} min",xy=(0, def_mean),xytext=(18, 0),textcoords="offset points",ha="left",va="center",fontsize=11,fontweight="bold")
+ax.annotate(f"{mid_mean:.2f} min",xy=(1, mid_mean),xytext=(-18, 0),textcoords="offset points",ha="right",va="center",fontsize=11,fontweight="bold")
 ax.set_title("Mean Minutes Played per Appearance\nwith 95% Confidence Intervals", fontsize=14, fontweight="bold", pad=15)
 ax.set_ylabel("Mean minutes per appearance (Mn/MP)", fontsize=11)
 ax.grid(axis="y", alpha=0.3)
