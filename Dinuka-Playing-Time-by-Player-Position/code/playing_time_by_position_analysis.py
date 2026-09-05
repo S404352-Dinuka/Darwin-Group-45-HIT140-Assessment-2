@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
+import math
 
 # Display a clear section header in the console output for each analytical stage
 def show_section(title):
@@ -238,16 +239,26 @@ show_section("VISUALISATION")
 BIN_WIDTH = 10
 max_value = max(def_sample.max(), mid_sample.max())
 bins = np.arange(0, max_value + BIN_WIDTH, BIN_WIDTH)
-plt.figure(figsize=(8, 5))
-plt.hist(def_sample, bins=bins, alpha=0.6, label="Defenders (DF)", edgecolor="black")
-plt.hist(mid_sample, bins=bins, alpha=0.6, label="Midfielders (MF)", edgecolor="black")
-plt.axvline(def_sample.mean(), color="#1f4e79", linestyle="--", linewidth=2, label=f"DF mean = {def_sample.mean():.1f}")
-plt.axvline(mid_sample.mean(), color="#a34700", linestyle="--", linewidth=2, label=f"MF mean = {mid_sample.mean():.1f}")
-plt.title("Distribution of Minutes Played per Appearance")
+df_mean = def_sample.mean()
+mf_mean = mid_sample.mean()
+mean_difference = df_mean - mf_mean
+
+plt.figure(figsize=(9, 5.5))
+plt.hist(def_sample,bins=bins,alpha=0.6,label=f"Defenders (n={len(def_sample)})",edgecolor="black")
+plt.hist(mid_sample,bins=bins,alpha=0.6,label=f"Midfielders (n={len(mid_sample)})",edgecolor="black")
+
+# Mean lines
+plt.axvline(df_mean,color="#1f4e79",linestyle="--",linewidth=2,label=f"DF mean = {df_mean:.1f} min")
+plt.axvline(mf_mean,color="#a34700",linestyle="--",linewidth=2,label=f"MF mean = {mf_mean:.1f} min")
+
+# Mean difference annotation
+plt.text(0.5,0.93,f"Mean difference = {mean_difference:.2f} minutes",transform=plt.gca().transAxes,ha="center",fontsize=11,fontweight="bold")
+
+plt.title("Minutes Played per Appearance: Defenders vs Midfielders",fontsize=14,fontweight="bold")
 plt.xlabel("Minutes played per appearance (Mn/MP)")
 plt.ylabel("Number of players")
 plt.legend()
-plt.grid(axis="y",alpha=0.3)
+plt.grid(axis="y", alpha=0.3)
 plt.tight_layout()
 plt.savefig("../outputs/playing_time_histogram.png", dpi=300)
 plt.close()
@@ -263,7 +274,7 @@ def mean_confidence_interval(values, confidence=0.95):
     n = len(values)
     sample_mean = values.mean()
     sample_std = values.std()
-    standard_error = (sample_std / np.sqrt(n))
+    standard_error = sample_std / math.sqrt(n)
     z_critical = stats.norm.ppf((1 + confidence) / 2)
     margin_error = (z_critical * standard_error)
     lower_bound = sample_mean - margin_error
@@ -299,6 +310,32 @@ confidence_table = pd.DataFrame(
 # Save confidence interval results
 confidence_table.round(3).to_csv("../outputs/confidence_intervals.csv", index=False)
 
+#======================================== CONFIDENCE INTERVAL VISUALISATION ============================================
+
+# Visualise the sample means and the 95% confidence intervals calculated in the previous section.
+
+groups = ["Defenders\n(DF)", "Midfielders\n(MF)"]
+means = [def_mean, mid_mean]
+lower_errors = [def_mean - def_ci_lower, mid_mean - mid_ci_lower]
+upper_errors = [def_ci_upper - def_mean, mid_ci_upper - mid_mean]
+lowest_ci = min(def_ci_lower, mid_ci_lower)
+highest_ci = max(def_ci_upper, mid_ci_upper)
+
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.errorbar(groups[0], means[0], yerr=[[lower_errors[0]], [upper_errors[0]]], fmt="o", markersize=10, capsize=8, linewidth=2, color="#1f77b4")
+ax.errorbar(groups[1], means[1], yerr=[[lower_errors[1]], [upper_errors[1]]], fmt="o", markersize=10, capsize=8, linewidth=2, color="#ff7f0e")
+ax.set_ylim(lowest_ci - 3, highest_ci + 5)
+ax.set_xlim(-0.15, 1.15)
+ax.annotate(f"{def_mean:.2f} min",xy=(0, def_mean),xytext=(18, 0),textcoords="offset points",ha="left",va="center",fontsize=11,fontweight="bold")
+ax.annotate(f"{mid_mean:.2f} min",xy=(1, mid_mean),xytext=(-18, 0),textcoords="offset points",ha="right",va="center",fontsize=11,fontweight="bold")
+ax.set_title("Mean Minutes Played per Appearance\nwith 95% Confidence Intervals", fontsize=14, fontweight="bold", pad=15)
+ax.set_ylabel("Mean minutes per appearance (Mn/MP)", fontsize=11)
+ax.grid(axis="y", alpha=0.3)
+
+fig.savefig("../outputs/playing_time_confidence_intervals.png", dpi=300, bbox_inches="tight", pad_inches=0.33)
+plt.close()
+print("\nConfidence interval visualisation saved as: playing_time_confidence_intervals.png")
+
 #======================================== TWO-SAMPLE t-TEST ============================================================
 show_section("TWO-SAMPLE t-TEST")
 
@@ -311,7 +348,10 @@ show_section("TWO-SAMPLE t-TEST")
 
 #Perform independent two-sample t-test
 # equal_var=False means equal population variances are not assumed.
-t_statistic, p_value = stats.ttest_ind(def_sample, mid_sample, equal_var=False, alternative="two-sided")
+t_statistic, p_value = stats.ttest_ind_from_stats(
+    def_sample.mean(), def_sample.std(), len(def_sample), mid_sample.mean(), mid_sample.std(), len(mid_sample),
+    equal_var=False, alternative="two-sided"
+)
 print("\nTwo-sample t-test results:")
 print(f"Defender mean: {def_sample.mean():.2f}")
 print(f"Midfielder mean: {mid_sample.mean():.2f}")
@@ -418,3 +458,4 @@ print("4. confidence_intervals.csv")
 print("5. ttest_results.csv")
 print("6. summary_table.csv")
 print("7. playing_time_histogram.png")
+print("8. playing_time_confidence_intervals.png")
