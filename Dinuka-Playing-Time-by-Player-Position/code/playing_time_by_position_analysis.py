@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
+import math
 
 # Display a clear section header in the console output for each analytical stage
 def show_section(title):
@@ -273,7 +274,7 @@ def mean_confidence_interval(values, confidence=0.95):
     n = len(values)
     sample_mean = values.mean()
     sample_std = values.std()
-    standard_error = (sample_std / np.sqrt(n))
+    standard_error = sample_std / math.sqrt(n)
     z_critical = stats.norm.ppf((1 + confidence) / 2)
     margin_error = (z_critical * standard_error)
     lower_bound = sample_mean - margin_error
@@ -365,7 +366,10 @@ show_section("TWO-SAMPLE t-TEST")
 
 #Perform independent two-sample t-test
 # equal_var=False means equal population variances are not assumed.
-t_statistic, p_value = stats.ttest_ind(def_sample, mid_sample, equal_var=False, alternative="two-sided")
+t_statistic, p_value = stats.ttest_ind_from_stats(
+    def_sample.mean(), def_sample.std(), len(def_sample), mid_sample.mean(), mid_sample.std(), len(mid_sample),
+    equal_var=False, alternative="two-sided"
+)
 print("\nTwo-sample t-test results:")
 print(f"Defender mean: {def_sample.mean():.2f}")
 print(f"Midfielder mean: {mid_sample.mean():.2f}")
