@@ -123,7 +123,7 @@ print("P-Val: " , p_val)
 if p_val < 0.05:
     print("Reject Hypothesis")
 else:
-    print("Approve")
+    print("Do not reject Hypothesis")
     
 
 #Creating a histogram by calculating bin count for midfielders
