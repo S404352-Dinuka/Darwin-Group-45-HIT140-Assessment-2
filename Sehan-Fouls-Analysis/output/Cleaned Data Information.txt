@@ -9,3 +9,12 @@ Sample of Forwards and Midfielders - 100
 
 MF sample mean - 1.268179
 FWD sample mean - 1.784145
+
+MF Mean Fouls_90 = 1.2681790330761695
+FWD Mean Fouls_90 = 1.784144528200172
+
+MF 95% Confidence Interval = 1.0715430384355087 to 1.4648150277168304
+FWD 95% Confidence Interval = 1.3626320413145585 to 2.2056570150857855
+
+T Stats:  -2.174211819839648
+P-Val:  0.9843159682055014
