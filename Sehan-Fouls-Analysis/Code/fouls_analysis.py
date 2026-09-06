@@ -2,6 +2,7 @@ import pandas as pd
 import scipy.stats as stats
 import statsmodels.stats.weightstats as statsm
 import math
+import matplotlib.pyplot as plt
 
 #Read the data in the csv file
 data = pd.read_csv("../data/raw/misc_stats_raw.csv")
@@ -123,6 +124,28 @@ if p_val < 0.05:
     print("Reject Hypothesis")
 else:
     print("Approve")
+    
+
+#Creating a histogram by calculating bin count for midfielders
+midf_hist = midf_sample["Fouls_90"].values
+midf_range = ((midf_hist.max()) - (midf_hist.min()))
+bin_width = 0.5
+bin_count_midf = int(midf_range/bin_width)
+plt.hist(midf_hist, bins=bin_count_midf)
+plt.title("Midfielders Fouls per 90 Mins")
+plt.xlabel("Fouls per 90 Min")
+plt.ylabel("No. of Midfielders")
+plt.show()
+
+#Creating a histogram by calculating bin count for forwards
+fwd_hist = fwd_sample["Fouls_90"].values
+fwd_range = ((fwd_hist.max()) - (fwd_hist.min()))
+bin_count_fwd = int(midf_range/bin_width)
+plt.hist(fwd_hist, bins=bin_count_fwd)
+plt.title("Forwards Fouls per 90 Mins")
+plt.xlabel("Fouls per 90 Min")
+plt.ylabel("No. of Forwards")
+plt.show()
 
 #Combine both groups into one dataset
 final_data = pd.concat([midf, fwd])
