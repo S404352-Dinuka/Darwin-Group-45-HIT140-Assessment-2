@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
+import os
 
 #To read the CSV file
 raw = pd.read_csv("data/raw/FIFA_2026_Goalkeeping.csv", header=1)
@@ -74,14 +75,21 @@ print(df["Workload"].value_counts())
 #Save the csv file of cleaned data in processed folder
 df.to_csv("data/processed/goalkeeping_clean.csv", index=False)
 
+# Creating output folder 
+os.makedirs("outputs", exist_ok=True)
+
 print("\nCleaned data saved.")
 
 # checking with the descriptive statistics for each workload group
 
 print("\nDescriptive statistics:")
 
-print(df.groupby("Workload")["Save%"].describe())
+descriptive_stats = df.groupby("Workload")["Save%"].describe()
 
+print(descriptive_stats)
+
+# Save descriptive statistics
+descriptive_stats.to_csv("outputs/descriptive_statistics.csv")
 
 # To visually compare higher and lower workload groups we used boxplot
 
@@ -92,7 +100,13 @@ plt.suptitle("")
 plt.xlabel("Workload")
 plt.ylabel("Save Percentage")
 
+plt.tight_layout()
+
+# Save the boxplot as PNG
+plt.savefig("outputs/save_percentage_boxplot.png", dpi=300, bbox_inches="tight")
+
 plt.show()
+plt.close()
 
 # 95% confidence intervals for mean Save%
 higher = df[df["Workload"] == "Higher"]["Save%"]
@@ -123,9 +137,79 @@ print("\n95% Confidence Interval:")
 print("Higher workload:", higher_ci)
 print("Lower workload:", lower_ci)
 
+# Save confidence intervals to CSV
+
+confidence_intervals = pd.DataFrame({
+    "Workload": ["Higher", "Lower"],
+    "Mean_Save_Percentage": [higher.mean(), lower.mean()],
+    "CI_Lower": [higher_ci[0], lower_ci[0]],
+    "CI_Upper": [higher_ci[1], lower_ci[1]]
+})
+
+confidence_intervals.to_csv(
+    "outputs/confidence_intervals.csv",
+    index=False
+)
+
+# Confidence interval visualisation
+
+means = [higher.mean(), lower.mean()]
+
+errors_lower = [
+    higher.mean() - higher_ci[0],
+    lower.mean() - lower_ci[0]
+]
+
+errors_upper = [
+    higher_ci[1] - higher.mean(),
+    lower_ci[1] - lower.mean()
+]
+
+plt.figure(figsize=(8, 6))
+
+plt.errorbar(
+    ["Higher workload", "Lower workload"],
+    means,
+    yerr=[errors_lower, errors_upper],
+    fmt="o",
+    capsize=6
+)
+
+plt.title("Mean Save Percentage with 95% Confidence Intervals")
+plt.xlabel("Workload")
+plt.ylabel("Mean Save Percentage")
+
+plt.tight_layout()
+
+# Saving confidence interval plot as PNG
+plt.savefig(
+    "outputs/save_percentage_confidence_intervals.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.show()
+plt.close()
+
+
 # Two-sample t-test
 t_test = stats.ttest_ind(higher, lower)
 
 print("\nTwo-sample t-test:")
 print("t-statistic:", t_test.statistic)
 print("p-value:", t_test.pvalue)
+
+# Save the t-test results
+
+test_results = pd.DataFrame({
+    "Test": ["Independent two-sample t-test"],
+    "t_statistic": [t_test.statistic],
+    "p_value": [t_test.pvalue]
+})
+
+test_results.to_csv(
+    "outputs/test_results.csv",
+    index=False
+)
+
+print("\nAll output files saved successfully.")
