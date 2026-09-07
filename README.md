@@ -25,5 +25,4 @@ Repository for HIT140 Assessment 2 (Darwin Group 45). This project contains data
 
 ## Requirements
 - Python 3.13+
-- packages: pandas, numpy, matplotlib, seaborn, scipy
-
+- packages: pandas, numpy, matplotlib, scipy, math
