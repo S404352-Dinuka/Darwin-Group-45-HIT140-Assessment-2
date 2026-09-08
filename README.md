@@ -73,10 +73,11 @@ Each analytical folder follows the same general structure:
 - matplotlib
 - scipy
 
-## Official Documentation
+## Additional References
 
-In addition to the weekly learning materials, the following official documentation was referenced for Python implementation and visualisation support:
+In addition to the weekly learning materials, the following references were used for Python implementation and visualisation support:
 
+- [Python 3 Documentation](https://docs.python.org/3/)
 - [Pandas Documentation](https://pandas.pydata.org/docs/)
 - [NumPy Documentation](https://numpy.org/doc/stable/)
 - [Matplotlib Documentation](https://matplotlib.org/stable/)
